@@ -1,0 +1,39 @@
+/* Create table about the people and what they do here */
+CREATE TABLE Artists(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    record_label_id INTEGER);
+
+INSERT INTO Artists(name,record_label_id) VALUES ('Maroon5','1');
+INSERT INTO Artists(name,record_label_id) VALUES ('Pink','2');
+INSERT INTO Artists(name,record_label_id) VALUES ('Adele','3');
+INSERT INTO Artists(name,record_label_id) VALUES ('Lady Gaga','4');
+INSERT INTO Artists(name,record_label_id) VALUES ('Taylor Swift','5');
+INSERT INTO Artists(name,record_label_id) VALUES ('Dua Lipa','2');
+INSERT INTO Artists(name,record_label_id) VALUES ('Miley Cyrus','5');
+INSERT INTO Artists(name,record_label_id) VALUES ('Post Malone','4');
+
+CREATE TABLE Record_label(
+    Label_id INTEGER,
+    name TEXT);
+
+
+INSERT INTO Record_label (Label_id,name)
+VALUES ('1','Warner Bros');
+INSERT INTO Record_label (Label_id,name)
+VALUES ('2','RCA');
+INSERT INTO Record_label (Label_id,name)
+VALUES ('3','Columbia');
+INSERT INTO Record_label (Label_id,name)
+VALUES ('4','Interscope');
+INSERT INTO Record_label (Label_id,name)
+VALUES ('5','Repulic');
+
+select * from Artists
+join Record_label
+on Artists.id=Record_label.Label_id;
+
+select A.id,A.name,R.Label_id,R.name
+from Artists A
+join Record_label R
+on A.id = R.label_id;
