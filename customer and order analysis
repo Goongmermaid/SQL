@@ -1,0 +1,88 @@
+select * from BIT_DB.customers limit 20 ;
+
+
+/*How many orders were placed in January?*/
+select count(orderId) 
+from  jansales
+WHERE length(orderid) = 6
+AND orderid <> 'Order ID';
+
+
+/*How many of those orders were for an iPhone?*/
+select count(orderid)
+from jansales
+where Product='iPhone'
+and length(orderid)=6
+and orderid<>'order ID';
+
+
+/*Select the customer account numbers for all the orders that were placed in February.*/
+select distinct acctnum
+from customers cust
+inner join febsales feb
+on cust.order_id=feb.orderID
+where length(orderid)=6
+and orderid<>'order ID';
+
+/*Which product was the cheapest one sold in January, and what was the price?*/
+select distinct product,price
+from jansales
+where price in (select min(price) from jansales);
+
+/*having muti answer on this*/
+SELECT distinct product, price
+FROM BIT_DB.JanSales
+ORDER BY price ASC LIMIT 1;
+
+SELECT distinct product, MIN(price)
+FROM BIT_DB.JanSales Jan
+GROUP BY product, price
+ORDER BY price ASC LIMIT 1;
+
+SELECT product, min(price)
+FROM BIT_DB.JanSales Jan
+GROUP BY product, price
+ORDER BY price ASC
+LIMIT 1;
+
+
+/*What is the total revenue for each product sold in January?*/
+select distinct product,sum(quantity)*price as revenue
+from jansales
+group by product ; 
+
+/*to see why we use sum(quantity)*price becoz we want to know total of each product how much they sold*/
+
+SELECT orderid, quantity, price, product
+FROM BIT_DB.JanSales;
+
+SELECT SUM(quantity), price, product
+FROM BIT_DB.JanSales
+GROUP BY product, price;
+
+SELECT SUM(quantity)*price as Revenue
+,product
+FROM BIT_DB.JanSales
+GROUP BY product;
+
+
+/*Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?*/
+
+select distinct product,
+sum(quantity),
+sum(quantity)*price as revenue 
+from febsales
+where location ='548 Lincoln St, Seattle, WA 98101'
+group by product ;
+
+
+
+/*How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?*/
+select count(distinct customers.acctnum),
+avg(quantity*price)
+from febsales 
+left join customers
+on febsales.orderid = customers.order_id
+where febsales.Quantity>2
+and length(orderid)=6
+and orderid<>'Order ID';
