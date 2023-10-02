@@ -86,3 +86,26 @@ on febsales.orderid = customers.order_id
 where febsales.Quantity>2
 and length(orderid)=6
 and orderid<>'Order ID';
+
+
+/*List all the products sold in Los Angeles in February, and include how many of each were sold.*/
+select product,sum(quantity)
+from febsales
+where location like '%Los Angeles%'
+group by product ;
+
+/*how to use date command*/
+##1. 
+SELECT orderdate
+FROM BIT_DB.FebSales
+WHERE orderdate between '02/13/19 00:00' AND '02/18/19 00:00'
+
+##2. 
+SELECT location
+FROM BIT_DB.FebSales 
+WHERE orderdate = '02/18/19 01:35'
+
+##3. 
+SELECT sum(quantity)
+FROM BIT_DB.FebSales 
+WHERE orderdate like '02/18/19%'
