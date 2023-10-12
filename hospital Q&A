@@ -205,3 +205,103 @@ having SUM(height)>=7000;
 select (max(weight)-MIN(weight)) as weight_dif
 FROM patients
 where last_name='Maroni';
+
+/*Show all of the days of the month (1-31) and how many admission_dates occurred on that day. Sort by the day with most admissions to least admissions.*/
+select DAY(admission_date)AS DAYNUMBER,
+		COUNT(*) AS TOTAL_ADMISSION
+FROM admissions
+group by DAYNUMBER
+order by TOTAL_ADMISSION DESC;
+-----------OR --------
+SELECT
+  DAY(admission_date) AS day_number,
+  COUNT(*) AS number_of_admissions
+FROM admissions
+GROUP BY day_number
+ORDER BY number_of_admissions DESC;
+
+/*Show all columns for patient_id 542's most recent admission_date.*/
+select * 
+FROM admissions
+where patient_id=542 
+order by admission_date desc
+limit 1;
+---------or----------
+SELECT *
+FROM admissions
+WHERE patient_id = 542
+GROUP BY patient_id
+HAVING
+  admission_date = MAX(admission_date);
+
+/*Show patient_id, attending_doctor_id, and diagnosis for admissions that match one of the two criteria:
+1. patient_id is an odd number and attending_doctor_id is either 1, 5, or 19.
+2. attending_doctor_id contains a 2 and the length of patient_id is 3 characters.*/
+select patient_id,attending_doctor_id,diagnosis
+FROM admissions
+where (attending_doctor_id in (1,5,19) and patient_id %2<>0)
+or (attending_doctor_id like '%2%' and len(patient_id)=3);
+
+/*Show first_name, last_name, and the total number of admissions attended for each doctor.Every admission has been attended by a doctor.*/
+select first_name,last_name,count(admission_date) as total_num
+from admissions
+join doctors 
+on admissions.attending_doctor_id=doctors.doctor_id
+group by doctor_id;
+--------or--------
+SELECT	first_name,
+  	last_name,
+  	count(*)
+from	doctors p,
+  	admissions a
+where	a.attending_doctor_id = p.doctor_id
+group by p.doctor_id;
+
+/*For each doctor, display their id, full name, and the first and last admission date they attended.*/
+select 	doctor_id,
+		(first_name||" "||last_name) as full_name,
+        min(admission_date) as first_addmis,
+        max(admission_date) as last_addmis
+from doctors
+join admissions
+on doctors.doctor_id=admissions.attending_doctor_id
+group by doctor_id;
+
+/*Display the total amount of patients for each province. Order by descending.*/
+select province_name,count(patient_id) as total_amount
+from patients
+join province_names
+on patients.province_id=province_names.province_id
+group by province_name
+order by total_amount desc;
+
+/*For every admission, display the patient's full name, their admission diagnosis, and their doctor's full name who diagnosed their problem.*/
+select (pa.first_name||" "||pa.last_name) as patient_fullname,
+		ad.diagnosis,
+        (d.first_name||" "||d.last_name) as doctor_fullname
+from patients pa 
+join admissions ad on pa.patient_id=ad.patient_id
+join doctors d on ad.attending_doctor_id=d.doctor_id;
+
+
+/*display the number of duplicate patients based on their first_name and last_name.*/
+select distinct first_name,last_name,count(*)
+from patients
+group by first_name,last_name
+having count(*)>1;
+
+/*Display patient's full name,height in the units feet rounded to 1 decimal,weight in the unit pounds rounded to 0 decimals,
+birth_date,gender non abbreviated.
+Convert CM to feet by dividing by 30.48.
+Convert KG to pounds by multiplying by 2.205.*/
+select (first_name||" "||last_name) as fullname,
+		round(height/30.48,1)as height,
+        round(weight*2.205,0)as weight,
+        birth_date,
+case  when gender='M' then 'male'
+	when gender='F' then 'female'
+end gender_type
+from patients;
+
+
+
